@@ -12,13 +12,9 @@ const screen = document.querySelector(".screen");
     else {
         handleNumber(value)
     }
- }
-
- function handleSymbol(){
-
- }
- 
- function handleNumber(numberString){
+    rerender();
+}
+function handleNumber(numberString){
     
     if( buffer === "0")
     {
@@ -28,9 +24,86 @@ const screen = document.querySelector(".screen");
         buffer += numberString
     }
 
-    screen.innerText = buffer;
-    console.log(screen.innerText)
 }
+
+function handleMath(Symbol) {
+    if (buffer ==="0"){
+       return;
+    }
+   console.log(Symbol);
+    const intBuffer = parseInt(buffer);
+
+    if (runningTotal === 0) 
+    {
+       runningTotal = intBuffer;
+    }
+    else {
+       flushOperation(intBuffer);
+    }
+
+    previousOperator = Symbol;
+
+    buffer ="0";
+}
+
+ 
+function flushOperation (intBuffer)
+{
+    if (previousOperator === "+") {
+        runningTotal += intBuffer;
+      } else if (previousOperator === "-") {
+        runningTotal -= intBuffer;
+      } else if (previousOperator === "×") {
+        runningTotal *= intBuffer;
+      } else {
+        runningTotal /= intBuffer;
+      }
+ 
+
+}
+ function handleSymbol(Symbol){
+
+    switch(Symbol)
+    {
+        case "C" :
+            buffer ="0";
+            runningTotal = 0;
+            break;
+     
+        case "=" : 
+            if(previousOperator === null){
+                return;
+            }
+            flushOperation(parseInt(buffer));
+            previousOperator = null;
+            buffer =+runningTotal;
+            runningTotal = 0;
+            break;
+       case "←":
+                if (buffer.length === 1) {
+                  buffer = "0";
+                } else {
+                  buffer = buffer.substring(0, buffer.length - 1);
+                }
+                break;
+                case "+":
+                    case "-":
+                    case "×":
+                    case "÷":
+                      handleMath(Symbol);
+                      break;
+    }
+
+ }
+
+ 
+
+
+
+
+function rerender() {
+    screen.innerText = buffer;
+  }
 
  function init() {
     document.querySelector('.calc-buttons')
